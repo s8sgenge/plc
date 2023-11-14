@@ -1,19 +1,16 @@
-import { BlurFilter } from 'pixi.js';
-import {
-  Stage,
-  Container,
-  Sprite,
-  Text,
-  useApp,
-  Graphics,
-  useTick,
-} from '@pixi/react';
+import { Graphics as GraphicsType } from 'pixi.js';
+import { Container, useApp, Graphics } from '@pixi/react';
 import { FederatedPointerEvent } from '@pixi/events';
 import '@pixi/events';
-import { useCallback, useMemo } from 'react';
+
+type CustomGraphicsType = GraphicsType & {
+  key: number;
+  xPos: number;
+  yPos: number;
+};
 
 const colorMap = { 0: '#B20C1C', 1: '#2129DF', 2: '#F5DDA3' };
-const array = [];
+const array: number[][] = [];
 const rows = 50;
 const cols = 50;
 
@@ -35,23 +32,30 @@ export const MyComponent = () => {
 
   const currentColor = 0;
 
-  const draggedGraphics = [];
+  const draggedGraphics: CustomGraphicsType[] = [];
 
-  const drawRectangle = (graphic, x, y, width, height, color) => {
+  const drawRectangle = (
+    graphic: CustomGraphicsType,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string
+  ) => {
     graphic.clear(); // Clear existing graphics
     graphic.beginFill(color); // Change the color to green (adjust as needed)
     graphic.drawRect(x, y, width, height);
     graphic.endFill();
   };
 
-  const changeGraphicColor = (graphic, color) => {
+  const changeGraphicColor = (graphic: CustomGraphicsType, color: string) => {
     graphic.clear(); // Clear existing graphics
     graphic.beginFill(color); // Change the color to green (adjust as needed)
     graphic.drawRect(graphic.xPos, graphic.yPos, rectWidth, rectWidth);
     graphic.endFill();
   };
 
-  const isCorrect = (graphic) => {
+  const isCorrect = (graphic: CustomGraphicsType) => {
     if (currentColor !== array[graphic.x][graphic.y]) {
       return false;
     }
@@ -65,25 +69,31 @@ export const MyComponent = () => {
   };
 
   const handleGraphicsClick = (event: FederatedPointerEvent) => {
-    if (isCorrect(event.currentTarget)) {
-      changeGraphicColor(event.currentTarget, colorMap[0]);
+    const graphic: CustomGraphicsType =
+      event.currentTarget as CustomGraphicsType;
+    if (isCorrect(graphic)) {
+      changeGraphicColor(graphic, colorMap[0]);
     }
   };
 
-  const handleGraphicsHover = (e: any) => {
-    const isDrag = e.data.buttons === 1;
-    if (isDrag && isCorrect(e.currentTarget)) {
-      changeGraphicColor(e.currentTarget, colorMap[0]);
+  const handleGraphicsHover = (event: FederatedPointerEvent) => {
+    const graphic: CustomGraphicsType =
+      event.currentTarget as CustomGraphicsType;
+    const isDrag = event.data.buttons === 1;
+    if (isDrag && isCorrect(graphic)) {
+      changeGraphicColor(graphic, colorMap[0]);
     }
-    e.currentTarget.alpha = 0.8;
+    graphic.alpha = 0.8;
   };
 
-  const handleGraphicsHoverEnd = (e: any) => {
-    const isDrag = e.data.buttons === 1;
+  const handleGraphicsHoverEnd = (event: FederatedPointerEvent) => {
+    const graphic: CustomGraphicsType =
+      event.currentTarget as CustomGraphicsType;
+    const isDrag = event.data.buttons === 1;
     if (!isDrag) {
-      e.currentTarget.alpha = 1;
+      graphic.alpha = 1;
     } else {
-      draggedGraphics.push(e.currentTarget);
+      draggedGraphics.push(graphic);
     }
   };
 
@@ -103,7 +113,7 @@ export const MyComponent = () => {
             pointerover={handleGraphicsHover}
             pointerout={handleGraphicsHoverEnd}
             pointerup={handlePointerUp}
-            draw={(g) => {
+            draw={(g: CustomGraphicsType) => {
               drawRectangle(
                 g,
                 xStart + x * (rectWidth + 1),
