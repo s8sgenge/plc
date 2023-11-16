@@ -1,4 +1,4 @@
-import { Graphics } from '@pixi/react';
+import { Container, Graphics } from '@pixi/react';
 import { FederatedPointerEvent, Graphics as GraphicsType } from 'pixi.js';
 import { FC } from 'react';
 
@@ -37,35 +37,37 @@ export const Tile: FC<TileProps> = (props: TileProps) => {
   ) => {
     graphic.clear();
     graphic.beginFill(color);
-    graphic.drawRect(x, y, width, height);
+    graphic.drawRoundedRect(x, y, width, height, 4);
     graphic.endFill();
   };
 
   return (
-    <Graphics
-      interactive={true}
-      cursor="pointer"
-      draw={(g: TileGraphic) => {
-        drawRectangle(
-          g,
-          xPosition,
-          yPosition,
-          props.width,
-          props.height,
-          props.color
-        );
-        g.id = props.id;
-        g.xPosition = xPosition;
-        g.yPosition = yPosition;
-        g.row = props.x;
-        g.column = props.y;
-        g.correct = false;
-        return g;
-      }}
-      pointerdown={props.onTileClick}
-      pointerover={props.onTileMouseEnter}
-      pointerout={props.onTileMouseLeave}
-      pointerup={props.onPointerUp}
-    />
+    <Container>
+      <Graphics
+        interactive={true}
+        cursor="pointer"
+        draw={(g: TileGraphic) => {
+          drawRectangle(
+            g,
+            xPosition,
+            yPosition,
+            props.width,
+            props.height,
+            props.color
+          );
+          g.id = props.id;
+          g.xPosition = xPosition;
+          g.yPosition = yPosition;
+          g.row = props.x;
+          g.column = props.y;
+          g.correct = false;
+          return g;
+        }}
+        pointerdown={props.onTileClick}
+        pointerover={props.onTileMouseEnter}
+        pointerout={props.onTileMouseLeave}
+        pointerup={props.onPointerUp}
+      />
+    </Container>
   );
 };

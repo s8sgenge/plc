@@ -20,7 +20,7 @@ const createDemoImage = () => {
 const COLOR_MAP = { 0: '#B20C1C', 1: '#2129DF', 2: '#F5DDA3' };
 const DEMO_IMAGE: number[][] = createDemoImage();
 const DEFAULT_TILE_COLOR = '#cacaca';
-
+const currentColor = 0;
 function App() {
   return (
     <>
@@ -31,6 +31,7 @@ function App() {
           colorMap={COLOR_MAP}
           demoImage={DEMO_IMAGE}
           defaultTileColor={DEFAULT_TILE_COLOR}
+          currentColor={currentColor}
         />
       </Stage>
     </>
